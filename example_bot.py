@@ -1,31 +1,37 @@
-# This example requires the 'message_content' intent.
-
 import logging
 import os
 
 import discord
+import openai
+from discord.ext import commands
+
 from dotenv import load_dotenv
 
 load_dotenv()
 BOT_TOKEN = os.getenv('DISCORD_BOT_TOKEN')
+openai.api_key = os.getenv('DISCORD_BOT_TOKEN')
 
 intents = discord.Intents.default()
 intents.message_content = True
 
-client = discord.Client(intents=intents)
-
-@client.event
-async def on_ready():
-    print(f'We have logged in as {client.user}')
-
-@client.event
-async def on_message(message):
-    # Don't respond to our own messages
-    if message.author == client.user:
-        return
-
-    if message.content.startswith('$Yo'):
-        await message.channel.send('Hello friend!')
-
 handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
-client.run(BOT_TOKEN, log_handler=handler)
+bot = commands.Bot(command_prefix='$', intents=intents, log_handler=handler)
+
+@bot.event
+async def on_ready():
+    print(f'Logged in as {bot.user}')
+    synced = await bot.tree.sync()
+    print('Slash commands synced:', len(synced))
+
+@bot.command()
+async def add(ctx, *args):
+    """Adds given numbers."""
+    res = sum(map(float, args))
+    await ctx.send(res)
+
+@bot.command()
+async def test(ctx, arg):
+    await ctx.send(arg)
+
+
+bot.run(BOT_TOKEN)
