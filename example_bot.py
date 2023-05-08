@@ -7,9 +7,12 @@ from discord.ext import commands
 
 from dotenv import load_dotenv
 
+from functools import reduce
+from operator import mul
+
 load_dotenv()
 BOT_TOKEN = os.getenv('DISCORD_BOT_TOKEN')
-openai.api_key = os.getenv('DISCORD_BOT_TOKEN')
+openai.api_key = os.getenv('OPENAI_API_KEY')
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -23,15 +26,18 @@ async def on_ready():
     synced = await bot.tree.sync()
     print('Slash commands synced:', len(synced))
 
-@bot.command()
-async def add(ctx, *args):
-    """Adds given numbers."""
-    res = sum(map(float, args))
-    await ctx.send(res)
+@bot.tree.command(name='add', description='Sum the given numbers.')
+async def add(interaction: discord.Interaction, n1: float, n2: float):
+    """Sum the given numbers."""
+    # await interaction.response.send_message(content='Checking the numbers...')
+    res = n1 + n2
+    await interaction.response.send_message(res)
 
-@bot.command()
-async def test(ctx, arg):
-    await ctx.send(arg)
-
+@bot.tree.command(name='divide', description='Divide the given numbers.')
+async def divide(interaction: discord.Interaction, n1: float, n2: float):
+    """Sum the given numbers."""
+    # await interaction.response.send_message(content='Checking the numbers...')
+    res = n1 / n2
+    await interaction.response.send_message(res)
 
 bot.run(BOT_TOKEN)
