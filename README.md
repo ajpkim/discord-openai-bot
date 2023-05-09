@@ -16,10 +16,10 @@ presence_penalty: float = 0.0,
 frequency_penalty: float = 0.0,
 ```
 
-Requires an OpenAI API Key and Discord Bot token.
+Requires an OpenAI API Key and Discord Bot token (in a `.env` file that gets loaded with `dotenv`).
 
 ## Running the app
 
 1. Install Docker
 2. Build the Docker image: `docker build -t openai_bot .`
-3. Run a Docker container: `docker run openai_bot`
+3. Run a Docker container: `docker run -d openai_bot`
