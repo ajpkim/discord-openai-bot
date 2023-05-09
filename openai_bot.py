@@ -31,7 +31,7 @@ async def on_ready():
 async def chat(
         interaction: discord.Interaction,
         prompt: str,
-        system_prompt: str | None = None,
+        system_prompt: str = None,
         model: str = 'gpt-3.5-turbo',
         # messages: [{str: str}] = [],
         temperature: float = 1.0,
