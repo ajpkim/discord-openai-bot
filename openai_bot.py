@@ -60,7 +60,8 @@ async def chat(
     # else:
     #     messages = [{"role": "user", "content": prompt}]
 
-    # await interaction.response.defer()
+    await interaction.response.defer()
+
     response = openai.ChatCompletion.create(
         model=model,
         messages=messages,
@@ -72,10 +73,18 @@ async def chat(
         frequency_penalty=frequency_penalty,
     )
 
-    # Combine messages for when n > 1
     results = [x['message']['content'] for x in response.choices]
-    msg = '\n--------------------------------------------------\n'.join(results)
 
-    await interaction.response.send_message(msg)
+    msg = f'PARAMS: model={model}, temperature={temperature}, top_p={top_p}, n={n}, max_tokens={max_tokens}, presence_penalty={presence_penalty}, frequency_penalty={frequency_penalty}\n'
+    msg += f'PROMPT: *{prompt}*\n\n'
+
+    if len(results) > 1:
+        for i, res in enumerate(results):
+            msg += f'------------------------- v{i+1} -------------------------\n{res}\n\n'
+    else:
+        msg += results[0]
+
+    await interaction.followup.send(msg)
+
 
 bot.run(BOT_TOKEN)
